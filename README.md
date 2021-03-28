@@ -76,9 +76,8 @@ GROUP BY  {{columns_to_show}}
 
 use macro:
 ---
-{{ dynamic_pivot ("name", "date_trunc(quarter, month)", "views", "DBT_SERGE.HERO_DTL_VIEWS") }}
 ```sql
-
+{{ dynamic_pivot ("name", "date_trunc(quarter, month)", "views", "DBT_SERGE.HERO_DTL_VIEWS") }}
 ```
 
 Sample data hero_dtl_views:
