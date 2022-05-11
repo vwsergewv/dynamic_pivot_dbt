@@ -8,21 +8,88 @@ CREATE OR REPLACE SCHEMA Edw;
 
 CREATE OR REPLACE SCHEMA Hotelbnb;
 
--- ************************************** Edw.DimAccount
-CREATE OR REPLACE TABLE Edw.DimAccount
+-- ************************************** Edw.DimCurrency
+CREATE OR REPLACE TABLE Edw.DimCurrency
 (
- AccountKey                    number(38,0) NOT NULL AUTOINCREMENT START 1 INCREMENT 1 COMMENT 'Unique Identifier of the Account data',
- ParentAccountKey              number(38,0) COMMENT 'Identifier of parent Account',
- AccountCodeAlternateKey       number(38,0) COMMENT 'from legacy system',
- ParentAccountCodeAlternateKey number(38,0),
- AccountDescription            varchar(50) COMMENT 'new comment',
- AccountType                   varchar(50),
- Operator                      varchar(50),
- CustomMembers                 varchar(300),
- ValueType                     varchar(50),
- CustomMemberOptions           varchar(200),
- AccountAdmin                  varchar(50),
- CONSTRAINT PK_DimAccount_AccountKey_PkDimAccount PRIMARY KEY ( AccountKey )
+ CurrencyKey          number(38,0) NOT NULL AUTOINCREMENT START 1 INCREMENT 1 COMMENT 'Currency Identifier',
+ CurrencyAlternateKey varchar(3) NOT NULL COMMENT 'Alternate Currency Identifier',
+ CurrencyName         varchar(50) NOT NULL COMMENT 'Name of the Currency',
+ CONSTRAINT PK_DimCurrency_CurrencyKey_PkDimCurrency PRIMARY KEY ( CurrencyKey )
 )
-COMMENT = 'Holds all Account information';
+COMMENT = 'Dimension for Currency Data';
+
+-- ************************************** Edw.DimEmployee
+CREATE OR REPLACE TABLE Edw.DimEmployee
+(
+ EmpKey                               number(38,0) NOT NULL AUTOINCREMENT START 1 INCREMENT 1,
+ ParentEmployeeKey                    number(38,0),
+ EmployeeNationalIdAlternateKey       varchar(15),
+ ParentEmployeeNationalIdAlternateKey varchar(15),
+ SalesTerritoryKey                    number(38,0),
+ FirstName                            varchar(50) NOT NULL,
+ LastName                             varchar(50) NOT NULL,
+ MiddleName                           varchar(50),
+ NameStyle                            number(38,0) NOT NULL,
+ Title                                varchar(50),
+ HireDate                             date,
+ BirthDate                            date,
+ LoginId                              varchar(256),
+ Emailaddress                         varchar(50),
+ Phone                                varchar(25),
+ MaritalStatus                        varchar(1),
+ EmergencyContactName                 varchar(50),
+ EmergencyContactPhone                varchar(25),
+ SalariedFlag                         number(38,0),
+ Gender                               varchar(1),
+ PayFrequency                         number(38,0),
+ BaseRate                             number(38,0),
+ VacationHours                        number(38,0),
+ SickLeaveHours                       number(38,0),
+ CurrentFlag                          number(38,0) NOT NULL,
+ SalesPersonFlag                      number(38,0) NOT NULL,
+ DepartmentName                       varchar(50),
+ StartDate                            date,
+ EndDate                              date,
+ Status                               varchar(50),
+ CONSTRAINT PK_DimEmployee_EmpKey_PkDimEmployee PRIMARY KEY ( EmpKey ),
+ CONSTRAINT FkDimEmployee403 FOREIGN KEY ( ParentEmployeeKey ) REFERENCES Edw.DimEmployee ( EmpKey ),
+ CONSTRAINT FkDimEmployee405 FOREIGN KEY ( SalesTerritoryKey ) REFERENCES Edw.DimSalesTerritory ( SalesTerritoryKey )
+);
+
+-- ************************************** Edw.DimCustomer
+CREATE OR REPLACE TABLE Edw.DimCustomer
+(
+ CustomerKey          number(38,0) NOT NULL AUTOINCREMENT START 1 INCREMENT 1 COMMENT 'Customer Identifier loaded from salesforce',
+ GeographyKey         number(38,0) COMMENT 'Geographic informatio',
+ CustomerAlternateKey varchar(15) NOT NULL COMMENT 'Alternate Key',
+ Title                varchar(8) COMMENT 'Title of the Customer',
+ FirstName            varchar(50) COMMENT 'cust first name',
+ MiddleName           varchar(50),
+ LastName             varchar(50),
+ NameStyle            varchar(5) COMMENT 'First or last name',
+ BirthDate            date COMMENT 'remember to flag as PII',
+ MaritalStatus        varchar(1),
+ Suffix               varchar(10),
+ Gender               varchar(1),
+ Emailaddress         varchar(50),
+ YearlyIncome         number(38,0),
+ TotalChildren        number(38,0),
+ NumberChildrenAtHome number(38,0) COMMENT 'hopefully none',
+ EnglishEducation     varchar(40),
+ SpanishEducation     varchar(40),
+ FrenchEducation      varchar(40),
+ EnglishOccupation    varchar(100),
+ SpanishOccupation    varchar(100),
+ FrenchOccupation     varchar(100),
+ HouseOwnerFlag       varchar(1),
+ NumberCarsOwned      number(38,0),
+ AddressLine          varchar(120),
+ AddressLine2         varchar(120),
+ Phone                varchar(20) COMMENT 'area code and phone',
+ DateFirstPurchase    date COMMENT 'when first purchased and not returned',
+ CommuteDistance      varchar(15),
+ CONSTRAINT PK_DimCustomer_CustomerKey_PkDimCustomer PRIMARY KEY ( CustomerKey ),
+ CONSTRAINT FkDimCustomer401 FOREIGN KEY ( GeographyKey ) REFERENCES Edw.DimGeography ( GeographyKey )
+)
+COMMENT = 'Dimension for Customer Data';
 
